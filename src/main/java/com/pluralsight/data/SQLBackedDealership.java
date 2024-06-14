@@ -84,10 +84,29 @@ public class SQLBackedDealership implements Dealership {
 
     @Override
     public boolean remove(Vehicle vehicle) {
+        //noinspection ReassignedVariable
         Stream<? extends Deletable> matching =
             StreamSupport.stream(
                 "[.sql/] SELECT * FROM vehicles WHERE vin = :vin".fetch(vehicle.vin()).spliterator(),
                 false);
+
+        matching = Stream.concat(matching,
+            StreamSupport.stream(
+                "[.sql/] SELECT * FROM inventory WHERE vin = :vin".fetch(vehicle.vin()).spliterator(),
+                false)
+        );
+
+        matching = Stream.concat(matching,
+            StreamSupport.stream(
+                "[.sql/] SELECT * FROM lease_contracts WHERE vin = :vin".fetch(vehicle.vin()).spliterator(),
+                false)
+        );
+
+        matching = Stream.concat(matching,
+            StreamSupport.stream(
+                "[.sql/] SELECT * FROM sales_contracts WHERE vin = :vin".fetch(vehicle.vin()).spliterator(),
+                false)
+        );
 
         boolean[] anyDone = {false};
         matching.forEach(deletable -> {
