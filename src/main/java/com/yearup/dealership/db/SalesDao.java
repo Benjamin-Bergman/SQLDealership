@@ -1,20 +1,18 @@
 package com.yearup.dealership.db;
 
-import com.yearup.dealership.models.SalesContract;
+import java.math.*;
+import java.time.*;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-public class SalesDao {
-    private DataSource dataSource;
-
-    public SalesDao(DataSource dataSource) {
-        this.dataSource = dataSource;
+public final class SalesDao {
+    private SalesDao() throws InstantiationException {
+        throw new InstantiationException("No instance for you");
     }
 
-    public void addSalesContract(SalesContract salesContract) {
-        // TODO: Implement the logic to add a sales contract
+    public static void addSalesContract(String vin, LocalDate date, double price) {
+        CarDealership.SalesContracts.builder()
+            .withVin(vin)
+            .withSaleDate(date)
+            .withPrice(BigDecimal.valueOf(price));
+        CarDealership.commit();
     }
 }

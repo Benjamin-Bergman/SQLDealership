@@ -1,20 +1,20 @@
 package com.yearup.dealership.db;
 
-import com.yearup.dealership.models.LeaseContract;
+import java.math.*;
+import java.time.*;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-public class LeaseDao {
-    private DataSource dataSource;
-
-    public LeaseDao(DataSource dataSource) {
-        this.dataSource = dataSource;
+public final class LeaseDao {
+    private LeaseDao() throws InstantiationException {
+        throw new InstantiationException("No instance for you");
     }
 
-    public void addLeaseContract(LeaseContract leaseContract) {
-        // TODO: Implement the logic to add a lease contract
+    public static void addLeaseContract(String vin, LocalDate start, LocalDate end, double payment) {
+        CarDealership.LeaseContracts.builder()
+            .withVin(vin)
+            .withLeaseStart(start)
+            .withLeaseEnd(end)
+            .withMonthlyPayment(BigDecimal.valueOf(payment))
+            .build();
+        CarDealership.commit();
     }
 }

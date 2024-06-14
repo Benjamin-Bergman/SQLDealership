@@ -1,22 +1,20 @@
 package com.yearup.dealership.db;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-public class InventoryDao {
-    private DataSource dataSource;
-
-    public InventoryDao(DataSource dataSource) {
-        this.dataSource = dataSource;
+public final class InventoryDao {
+    private InventoryDao() throws InstantiationException {
+        throw new InstantiationException("No instance for you");
     }
 
-    public void addVehicleToInventory(String vin, int dealershipId) {
-        // TODO: Implement the logic to add a vehicle to the inventory
+    public static void addVehicleToInventory(String vin, int dealershipId) {
+        CarDealership.Inventory.builder()
+            .withVin(vin)
+            .withDealershipId(dealershipId)
+            .build();
+        CarDealership.commit();
     }
 
-    public void removeVehicleFromInventory(String vin) {
-        // TODO: Implement the logic to remove a vehicle from the inventory
+    public static void removeVehicleFromInventory(String vin) {
+        CarDealership.Inventory.fetchByVin(vin).forEach(CarDealership.Inventory::delete);
+        CarDealership.commit();
     }
 }

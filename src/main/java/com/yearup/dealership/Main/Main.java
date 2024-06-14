@@ -1,38 +1,12 @@
 package com.yearup.dealership.Main;
 
-import com.yearup.dealership.db.InventoryDao;
-import com.yearup.dealership.db.LeaseDao;
-import com.yearup.dealership.db.SalesDao;
-import com.yearup.dealership.db.VehicleDao;
-import com.yearup.dealership.models.LeaseContract;
-import com.yearup.dealership.models.SalesContract;
-import com.yearup.dealership.models.Vehicle;
-import org.apache.commons.dbcp2.BasicDataSource;
+import com.yearup.dealership.db.*;
 
-import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
+import java.time.*;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        String username = args[0];
-        String password = args[1];
-
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setUrl("jdbc:mysql://localhost:3306/car_dealership");
-
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-
-        // Create instances of required DAO classes
-        VehicleDao vehicleDao = new VehicleDao(dataSource);
-        InventoryDao inventoryDao = new InventoryDao(dataSource);
-        SalesDao salesDao = new SalesDao(dataSource);
-        LeaseDao leaseDao = new LeaseDao(dataSource);
-
         // Create a Scanner object for user input
         Scanner scanner = new Scanner(System.in);
 
@@ -50,16 +24,16 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    searchVehiclesMenu(vehicleDao, scanner);
+                    searchVehiclesMenu(scanner);
                     break;
                 case 2:
-                    addVehicleMenu(vehicleDao, inventoryDao, scanner);
+                    addVehicleMenu(scanner);
                     break;
                 case 3:
-                    addContractMenu(salesDao, leaseDao, scanner);
+                    addContractMenu(scanner);
                     break;
                 case 4:
-                    removeVehicleMenu(vehicleDao, inventoryDao, scanner);
+                    removeVehicleMenu(scanner);
                     break;
                 case 5:
                     exit = true;
@@ -73,7 +47,15 @@ public class Main {
         scanner.close();
     }
 
-    private static void addContractMenu(SalesDao salesDao, LeaseDao leaseDao, Scanner scanner) {
+    public static String generateRandomVin() {
+        UUID uuid = UUID.randomUUID();
+        String randomUUIDString = uuid.toString().toUpperCase().replaceAll("-", "");
+        // Assuming VIN length is 17 characters, you can adjust this if needed
+        String vin = randomUUIDString.substring(0, 17);
+        return vin;
+    }
+
+    private static void addContractMenu(Scanner scanner) {
         System.out.print("Enter the VIN of the vehicle to add a contract: ");
         String vin = scanner.nextLine();
 
@@ -86,10 +68,10 @@ public class Main {
 
         switch (contractTypeChoice) {
             case 1:
-                addSalesContract(salesDao, vin, scanner);
+                addSalesContract(vin, scanner);
                 break;
             case 2:
-                addLeaseContract(leaseDao, vin, scanner);
+                addLeaseContract(vin, scanner);
                 break;
             default:
                 System.out.println("Invalid choice. Contract not added.");
@@ -97,7 +79,7 @@ public class Main {
         }
     }
 
-    private static void addSalesContract(SalesDao salesDao, String vin, Scanner scanner) {
+    private static void addSalesContract(String vin, Scanner scanner) {
 
         System.out.print("Enter the sale date (YYYY-MM-DD): ");
         String saleDateStr = scanner.nextLine();
@@ -107,13 +89,12 @@ public class Main {
         double price = scanner.nextDouble();
         scanner.nextLine(); // Consume the newline character
 
-        SalesContract salesContract = new SalesContract(vin, saleDate, price);
-        salesDao.addSalesContract(salesContract);
+        SalesDao.addSalesContract(vin, saleDate, price);
 
         System.out.println("Sales contract added successfully.");
     }
 
-    private static void addLeaseContract(LeaseDao leaseDao, String vin, Scanner scanner) {
+    private static void addLeaseContract(String vin, Scanner scanner) {
 
         System.out.print("Enter the lease start date (YYYY-MM-DD): ");
         String leaseStartDateStr = scanner.nextLine();
@@ -127,14 +108,12 @@ public class Main {
         double monthlyPayment = scanner.nextDouble();
         scanner.nextLine(); // Consume the newline character
 
-        LeaseContract leaseContract = new LeaseContract(vin, leaseStartDate, leaseEndDate, monthlyPayment);
-        leaseDao.addLeaseContract(leaseContract);
+        LeaseDao.addLeaseContract(vin, leaseStartDate, leaseEndDate, monthlyPayment);
 
         System.out.println("Lease contract added successfully.");
     }
 
-
-    private static void searchVehiclesMenu(VehicleDao vehicleDao, Scanner scanner) {
+    private static void searchVehiclesMenu(Scanner scanner) {
         boolean back = false;
         while (!back) {
             System.out.println("\nSearch Vehicles:");
@@ -151,22 +130,22 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    searchByPriceRange(vehicleDao, scanner);
+                    searchByPriceRange(scanner);
                     break;
                 case 2:
-                    searchByMakeAndModel(vehicleDao, scanner);
+                    searchByMakeAndModel(scanner);
                     break;
                 case 3:
-                    searchByYearRange(vehicleDao, scanner);
+                    searchByYearRange(scanner);
                     break;
                 case 4:
-                    searchByColor(vehicleDao, scanner);
+                    searchByColor(scanner);
                     break;
                 case 5:
-                    searchByMileageRange(vehicleDao, scanner);
+                    searchByMileageRange(scanner);
                     break;
                 case 6:
-                    searchByType(vehicleDao, scanner);
+                    searchByType(scanner);
                     break;
                 case 7:
                     back = true;
@@ -178,7 +157,7 @@ public class Main {
         }
     }
 
-    private static void searchByPriceRange(VehicleDao vehicleDao, Scanner scanner) {
+    private static void searchByPriceRange(Scanner scanner) {
         System.out.print("Enter the minimum price: ");
         double minPrice = scanner.nextDouble();
         scanner.nextLine(); // Consume the newline character
@@ -187,22 +166,22 @@ public class Main {
         double maxPrice = scanner.nextDouble();
         scanner.nextLine(); // Consume the newline character
 
-        List<Vehicle> vehicles = vehicleDao.searchByPriceRange(minPrice, maxPrice);
+        List<CarDealership.Vehicles> vehicles = VehicleDao.searchByPriceRange(minPrice, maxPrice);
         displaySearchResults(vehicles);
     }
 
-    private static void searchByMakeAndModel(VehicleDao vehicleDao, Scanner scanner) {
+    private static void searchByMakeAndModel(Scanner scanner) {
         System.out.print("Enter the make: ");
         String make = scanner.nextLine();
 
         System.out.print("Enter the model: ");
         String model = scanner.nextLine();
 
-        List<Vehicle> vehicles = vehicleDao.searchByMakeModel(make, model);
+        List<CarDealership.Vehicles> vehicles = VehicleDao.searchByMakeModel(make, model);
         displaySearchResults(vehicles);
     }
 
-    private static void searchByYearRange(VehicleDao vehicleDao, Scanner scanner) {
+    private static void searchByYearRange(Scanner scanner) {
         System.out.print("Enter the minimum year: ");
         int minYear = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
@@ -211,19 +190,19 @@ public class Main {
         int maxYear = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
 
-        List<Vehicle> vehicles = vehicleDao.searchByYearRange(minYear, maxYear);
+        List<CarDealership.Vehicles> vehicles = VehicleDao.searchByYearRange(minYear, maxYear);
         displaySearchResults(vehicles);
     }
 
-    private static void searchByColor(VehicleDao vehicleDao, Scanner scanner) {
+    private static void searchByColor(Scanner scanner) {
         System.out.print("Enter the color: ");
         String color = scanner.nextLine();
 
-        List<Vehicle> vehicles = vehicleDao.searchByColor(color);
+        List<CarDealership.Vehicles> vehicles = VehicleDao.searchByColor(color);
         displaySearchResults(vehicles);
     }
 
-    private static void searchByMileageRange(VehicleDao vehicleDao, Scanner scanner) {
+    private static void searchByMileageRange(Scanner scanner) {
         System.out.print("Enter the minimum mileage: ");
         int minMileage = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
@@ -232,30 +211,30 @@ public class Main {
         int maxMileage = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
 
-        List<Vehicle> vehicles = vehicleDao.searchByMileageRange(minMileage, maxMileage);
+        List<CarDealership.Vehicles> vehicles = VehicleDao.searchByMileageRange(minMileage, maxMileage);
         displaySearchResults(vehicles);
     }
 
-    private static void searchByType(VehicleDao vehicleDao, Scanner scanner) {
+    private static void searchByType(Scanner scanner) {
         System.out.print("Enter the vehicle type: ");
         String type = scanner.nextLine();
 
-        List<Vehicle> vehicles = vehicleDao.searchByType(type);
+        List<CarDealership.Vehicles> vehicles = VehicleDao.searchByType(type);
         displaySearchResults(vehicles);
     }
 
-    private static void displaySearchResults(List<Vehicle> vehicles) {
+    private static void displaySearchResults(List<CarDealership.Vehicles> vehicles) {
         if (vehicles.isEmpty()) {
             System.out.println("No vehicles found.");
         } else {
             System.out.println("\nSearch Results:");
-            for (Vehicle vehicle : vehicles) {
+            for (var vehicle : vehicles) {
                 System.out.println(vehicle);
             }
         }
     }
 
-    private static void addVehicleMenu(VehicleDao vehicleDao, InventoryDao inventoryDao, Scanner scanner) {
+    private static void addVehicleMenu(Scanner scanner) {
 
         String vin = generateRandomVin();
 
@@ -287,29 +266,19 @@ public class Main {
         int dealershipId = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
 
-        Vehicle vehicle = new Vehicle(vin, make, model, year, false, color, type, mileage, price);
-        vehicleDao.addVehicle(vehicle);
-        inventoryDao.addVehicleToInventory(vin, dealershipId);
+        VehicleDao.addVehicle(vin, make, model, year, false, color, type, mileage, price);
+        InventoryDao.addVehicleToInventory(vin, dealershipId);
 
         System.out.println("Vehicle added successfully.");
     }
 
-    private static void removeVehicleMenu(VehicleDao vehicleDao, InventoryDao inventoryDao, Scanner scanner) {
+    private static void removeVehicleMenu(Scanner scanner) {
         System.out.print("Enter the VIN of the vehicle to remove: ");
         String vin = scanner.nextLine();
 
-        inventoryDao.removeVehicleFromInventory(vin);
-        vehicleDao.removeVehicle(vin);
+        InventoryDao.removeVehicleFromInventory(vin);
+        VehicleDao.removeVehicle(vin);
         System.out.println("Vehicle removed successfully.");
 
     }
-
-    public static String generateRandomVin() {
-        UUID uuid = UUID.randomUUID();
-        String randomUUIDString = uuid.toString().toUpperCase().replaceAll("-", "");
-        // Assuming VIN length is 17 characters, you can adjust this if needed
-        String vin = randomUUIDString.substring(0, 17);
-        return vin;
-    }
-
 }

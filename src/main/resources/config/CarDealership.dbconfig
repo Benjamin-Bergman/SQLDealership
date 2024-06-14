@@ -1,0 +1,6 @@
+{
+  "url": "jdbc:mysql://localhost:3306/car_dealership?user=${MYSQL_USERNAME}&password=${MYSQL_PASSWORD}",
+  "schemaPackage": "com.yearup.dealership.db",
+  "schemaName": "car_dealership",
+  "catalogName": "car_dealership"
+}
