@@ -29,23 +29,23 @@ public class SQLBackedDealership implements Dealership {
      */
     public SQLBackedDealership(int id) {
         this.id = id;
-        entity = "[.sql/] SELECT * FROM dealerships WHERE dealership_id = :id".fetchOne(id);
+        entity = CarDealership.Dealerships.fetch(id);
         contracts = new SQLBackedContractManager();
     }
 
     @Override
     public String getPhone() {
-        return "[.sql/] SELECT phone FROM dealerships WHERE dealership_id = :id".fetchOne(id).phone;
+        return entity.phone;
     }
 
     @Override
     public String getAddress() {
-        return "[.sql/] SELECT address FROM dealerships WHERE dealership_id = :id".fetchOne(id).address;
+        return entity.address;
     }
 
     @Override
     public String getDisplayName() {
-        return "[.sql/] SELECT name FROM dealerships WHERE dealership_id = :id".fetchOne(id).name;
+        return entity.name;
     }
 
     @Override
@@ -86,27 +86,20 @@ public class SQLBackedDealership implements Dealership {
     @Override
     public boolean remove(Vehicle vehicle) {
         //noinspection ReassignedVariable
-        Stream<? extends Deletable> matching =
-            StreamSupport.stream(
-                "[.sql/] SELECT * FROM vehicles WHERE vin = :vin".fetch(vehicle.vin()).spliterator(),
-                false);
-
-        matching = Stream.concat(matching,
-            StreamSupport.stream(
-                "[.sql/] SELECT * FROM inventory WHERE vin = :vin".fetch(vehicle.vin()).spliterator(),
-                false)
+        Stream<? extends Deletable> matching = Stream.of(
+            CarDealership.Vehicles.fetch(vehicle.vin())
         );
 
         matching = Stream.concat(matching,
-            StreamSupport.stream(
-                "[.sql/] SELECT * FROM lease_contracts WHERE vin = :vin".fetch(vehicle.vin()).spliterator(),
-                false)
+            CarDealership.Inventory.fetchByVin(vehicle.vin()).stream()
         );
 
         matching = Stream.concat(matching,
-            StreamSupport.stream(
-                "[.sql/] SELECT * FROM sales_contracts WHERE vin = :vin".fetch(vehicle.vin()).spliterator(),
-                false)
+            CarDealership.LeaseContracts.fetchByVin(vehicle.vin()).stream()
+        );
+
+        matching = Stream.concat(matching,
+            CarDealership.SalesContracts.fetchByVin(vehicle.vin()).stream()
         );
 
         boolean[] anyDone = {false};
@@ -161,9 +154,9 @@ public class SQLBackedDealership implements Dealership {
         public boolean remove(Contract item) {
             Iterable<? extends Deletable> items;
             if (item instanceof SalesContract sale)
-                items = "[.sql/] SELECT * FROM sales_contracts WHERE vin = :vin".fetch(sale.vehicleSold.vin());
+                items = CarDealership.LeaseContracts.fetchByVin(sale.vehicleSold.vin());
             else if (item instanceof LeaseContract lease)
-                items = "[.sql/] SELECT * FROM lease_contracts WHERE vin = :vin".fetch(lease.vehicleSold.vin());
+                items = CarDealership.SalesContracts.fetchByVin(lease.vehicleSold.vin());
             else
                 throw new IllegalArgumentException("Unexpected argument! Got type ${item.getClass().getSimpleName()}");
 
