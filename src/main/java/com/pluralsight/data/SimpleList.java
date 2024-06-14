@@ -2,7 +2,7 @@
  * Copyright (c) Benjamin Bergman 2024.
  */
 
-package com.pluralsight;
+package com.pluralsight.data;
 
 /**
  * Represents a collection which can be added to, removed from, and iterated over.

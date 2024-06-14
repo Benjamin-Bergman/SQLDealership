@@ -2,8 +2,10 @@
  * Copyright (c) Benjamin Bergman 2024.
  */
 
-package com.pluralsight;
+package com.pluralsight.data.contracts;
 
+import com.pluralsight.*;
+import com.pluralsight.data.*;
 import manifold.ext.delegation.rt.api.*;
 
 import java.io.*;

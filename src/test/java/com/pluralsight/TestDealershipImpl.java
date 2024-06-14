@@ -4,6 +4,8 @@
 
 package com.pluralsight;
 
+import com.pluralsight.data.*;
+
 import java.util.*;
 
 final class TestDealershipImpl implements Dealership {

@@ -4,6 +4,9 @@
 
 package com.pluralsight;
 
+import com.pluralsight.data.*;
+import com.pluralsight.data.contracts.*;
+
 import java.io.*;
 
 @SuppressWarnings("UtilityClass")

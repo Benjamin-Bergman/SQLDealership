@@ -2,8 +2,9 @@
  * Copyright (c) Benjamin Bergman 2024.
  */
 
-package com.pluralsight;
+package com.pluralsight.data.contracts;
 
+import com.pluralsight.data.*;
 import manifold.ext.props.rt.api.*;
 
 import java.time.*;

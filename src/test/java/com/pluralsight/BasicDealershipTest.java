@@ -4,6 +4,7 @@
 
 package com.pluralsight;
 
+import com.pluralsight.data.*;
 import org.junit.jupiter.api.*;
 
 import java.util.*;

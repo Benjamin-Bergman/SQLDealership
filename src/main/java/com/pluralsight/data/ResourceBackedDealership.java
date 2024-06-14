@@ -2,7 +2,7 @@
  * Copyright (c) Benjamin Bergman 2024.
  */
 
-package com.pluralsight;
+package com.pluralsight.data;
 
 import java.io.*;
 import java.util.*;
