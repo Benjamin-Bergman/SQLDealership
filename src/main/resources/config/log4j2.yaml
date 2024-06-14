@@ -1,0 +1,15 @@
+Configuration:
+  status: warn
+  name: YAMLConfig
+  appenders:
+    Console:
+      name: STDOUT
+      target: SYSTEM_ERR
+      PatternLayout:
+        Pattern: "%m%n"
+
+  Loggers:
+    Root:
+      level: warn
+      AppenderRef:
+        ref: STDOUT
