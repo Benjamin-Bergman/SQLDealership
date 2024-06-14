@@ -1,7 +1,8 @@
 # Car Dealership App
 
-An app to manage cars at a dealership. It will automatically save to and load from a file.
-It also manages contracts for sold or leased vehicles.
+An app to manage cars at a dealership. It will automatically save to
+and load from a MySQL database. It also manages contracts for sold or
+leased vehicles.
 
 ## Setup
 
@@ -14,6 +15,9 @@ Instructions on how to set up and run the project using IntelliJ IDEA.
 - Java SDK: Make sure Java SDK is installed and configured in IntelliJ.
 - IntelliJ Manifold plugin: The program will compile and run without this, but it provides a better editor experience.
   You can download it [here](https://plugins.jetbrains.com/plugin/10057-manifold).
+- A running MySQL server on `localhost:3306` with the `car_dealership` schema installed.
+- Environment variables `MYSQL_USERNAME` and `MYSQL_PASSWORD` with the relevant credentials
+  for your server.
 
 ### Running the Application in IntelliJ
 
