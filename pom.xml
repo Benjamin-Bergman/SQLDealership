@@ -27,6 +27,11 @@
         </dependency>
         <dependency>
             <groupId>systems.manifold</groupId>
+            <artifactId>manifold-ext-rt</artifactId>
+            <version>${manifold.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>systems.manifold</groupId>
             <artifactId>manifold-props-rt</artifactId>
             <version>${manifold.version}</version>
         </dependency>
@@ -72,6 +77,11 @@
                         <arg>-Xplugin:Manifold</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
+                        <path>
+                            <groupId>systems.manifold</groupId>
+                            <artifactId>manifold-ext</artifactId>
+                            <version>${manifold.version}</version>
+                        </path>
                         <path>
                             <groupId>systems.manifold</groupId>
                             <artifactId>manifold-exceptions</artifactId>
