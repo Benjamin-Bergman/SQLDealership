@@ -84,12 +84,20 @@ public class SQLBackedDealership implements Dealership {
 
     @Override
     public boolean remove(Vehicle vehicle) {
-        var matching = "[.sql/] SELECT * FROM vehicles WHERE vin = :vin".fetch(vehicle.vin()).iterator();
-        if (!matching.hasNext())
+        Stream<? extends Deletable> matching =
+            StreamSupport.stream(
+                "[.sql/] SELECT * FROM vehicles WHERE vin = :vin".fetch(vehicle.vin()).spliterator(),
+                false);
+
+        boolean[] anyDone = {false};
+        matching.forEach(deletable -> {
+            anyDone[0] = true;
+            deletable.delete();
+        });
+
+        if (!anyDone[0])
             return false;
-        do matching.next().delete();
-        while (matching.hasNext());
-        // TODO: Delete inventory & contracts
+
         CarDealership.commit();
         return true;
     }
@@ -192,11 +200,11 @@ public class SQLBackedDealership implements Dealership {
         public Spliterator<Contract> spliterator() {
             return fetchAll().spliterator();
         }
+    }
 
-        @FunctionalInterface
-        @Structural
-        private interface Deletable {
-            void delete();
-        }
+    @FunctionalInterface
+    @Structural
+    private interface Deletable {
+        void delete();
     }
 }
