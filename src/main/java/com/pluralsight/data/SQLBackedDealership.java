@@ -18,9 +18,10 @@ import java.util.stream.*;
 /**
  * Represents a {@link Dealership} held in an SQL database.
  */
+@SuppressWarnings({"StaticMethodReferencedViaSubclass", "FeatureEnvy"})
 public class SQLBackedDealership implements Dealership {
     private final int id;
-    private final com.pluralsight.sql.CarDealership.Dealerships entity;
+    private final CarDealership.Dealerships entity;
     private final SQLBackedContractManager contracts;
 
     /**
@@ -133,6 +134,7 @@ public class SQLBackedDealership implements Dealership {
         return contracts;
     }
 
+    @SuppressWarnings("ChainOfInstanceofChecks")
     private static class SQLBackedContractManager implements SimpleList<Contract> {
         @Override
         public void add(Contract item) {
